@@ -4,7 +4,18 @@ import bcrypt from 'bcrypt'
 
 const resolvers = {
     events: async () => {
-        return await Event.find().populate('creator')
+        let events = await Event.find().populate('creator')
+        
+        return events.map(event => {     
+            return {
+                _id: event._id,
+                title: event.title,
+                description: event.description,
+                price: event.price,
+                date: new Date(event.date).toISOString(),
+                creator: event.creator
+            }
+        })
     },
     createEvent: async (args) => {
         const { title, description, price, date } = args.eventInput
@@ -23,6 +34,8 @@ const resolvers = {
             const creator = await User.findById('632c00089dc979db1a73e5d5')
             creator.createdEvents.push(event)
             await creator.save()
+
+            event.date = new Date(event.date).toISOString()
 
             return event.populate('creator')
 
