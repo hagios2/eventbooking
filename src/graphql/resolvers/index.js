@@ -8,10 +8,8 @@ const resolvers = {
         
         return events.map(event => {     
             return {
+                ...event._doc,
                 _id: event._id,
-                title: event.title,
-                description: event.description,
-                price: event.price,
                 date: new Date(event.date).toISOString(),
                 creator: event.creator
             }
@@ -36,11 +34,15 @@ const resolvers = {
             await creator.save()
 
             event.date = new Date(event.date).toISOString()
+            event.populate('creator')
 
-            return event.populate('creator')
-
+            return {
+                ...event._doc,
+                _id: event._id,
+                date: new Date(event.date).toISOString(),
+                creator : creator.populate('createdEvents')
+            }
         } catch (err) {
-            console.log(err)
             throw err
         }
     },
