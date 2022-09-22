@@ -1,6 +1,9 @@
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { buildSchema } from 'graphql'
+import dotenv from 'dotenv'
+dotenv.config()
+import connection from './src/config/db.js'
 
 const app = express()
 
@@ -43,7 +46,7 @@ app.use('/graphql', graphqlHTTP({
             return events
         },
         createEvent: (args) => {
-            const { title, description, price, date } = args
+            const { title, description, price } = args.eventInput
         
             const event = {
                 _id: Math.random().toString(),
@@ -54,6 +57,8 @@ app.use('/graphql', graphqlHTTP({
             }
 
             events.push(event)
+
+            return event
         }
     },
     graphiql: true
@@ -61,4 +66,7 @@ app.use('/graphql', graphqlHTTP({
 
 const PORT  = process.env.PORT || 3100
 
-app.listen(PORT, () => console.log(`server running on port ${PORT}`))
+app.listen(PORT, () => {
+    console.log(`server running on port ${PORT}`)
+    connection()
+})
