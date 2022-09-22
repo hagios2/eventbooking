@@ -4,10 +4,9 @@ import { buildSchema } from 'graphql'
 import dotenv from 'dotenv'
 dotenv.config()
 import connection from './src/config/db.js'
+import { Event } from './src/models/Event.js'
 
 const app = express()
-
-const events = []
 
 app.use(express.json())
 
@@ -42,23 +41,28 @@ app.use('/graphql', graphqlHTTP({
         }
     `),
     rootValue: {
-        events: () => {
-            return events
+        events: async () => {
+            return await Event.find()
         },
-        createEvent: (args) => {
-            const { title, description, price } = args.eventInput
+        createEvent: async (args) => {
+            const { title, description, price, date } = args.eventInput
         
-            const event = {
-                _id: Math.random().toString(),
-                title,
-                description,
-                price: +price,
-                date: new Date().toISOString()
+            try {
+                const event = new Event({
+                    title,
+                    description,
+                    price,
+                    date: new Date(date)
+                })
+                
+                await event.save()
+
+                return event
+
+            } catch (err) {
+                console.log(err)
+                throw err
             }
-
-            events.push(event)
-
-            return event
         }
     },
     graphiql: true
