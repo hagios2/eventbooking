@@ -20,20 +20,14 @@ const eventSchema = new Schema({
     date: {
         type: Date,
         required: true
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {
     timestamps: true
 })
-
-class EventClass {
-
-    async createAdmin(data)
-    {
-        return this.create(data);
-    }
-}
-
-eventSchema.loadClass(EventClass)
 
 const Event = mongoose.model('Event', eventSchema )
 
