@@ -2,9 +2,9 @@ import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import dotenv from 'dotenv'
 dotenv.config()
-import connection from './src/config/db.js'
-import schema from './src/graphql/schema/index.js'
-import resolvers from './src/graphql/resolvers/index.js'
+import connection from './config/db.js'
+import schema from './graphql/schema/index.js'
+import resolvers from './graphql/resolvers/index.js'
 
 const app = express()
 
