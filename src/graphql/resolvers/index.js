@@ -1,5 +1,6 @@
 import { Event } from '../../models/Event.js'
 import { User } from '../../models/User.js'
+import { Booking } from '../../models/Booking.js'
 import bcrypt from 'bcrypt'
 
 const resolvers = {
@@ -74,6 +75,37 @@ const resolvers = {
         } catch (err) {
             console.log(err)
             throw err
+        }
+    },
+    createBooking: async () => {
+        try {
+            const bookings = await Booking.find()
+
+            return bookings.map(booking => {
+                return {
+                    ...booking._doc,
+                    _id: booking.id,
+                    createdAt: new Date(booking._doc.createdAt).toISOString(),
+                    updatedAt: new Date(booking._doc.updatedAt).toISOString()
+                }
+            })
+        } catch (err) {
+            throw err
+        }
+    },
+    bookEvent: async args => {
+        const event = await Event.findOne({_id: args.eventId})
+        const booking = new Booking({
+            user: '632bff8c6a20edd9bf989287',
+            event
+        })
+
+        const result = await booking.save()
+        return { 
+            ...result._doc,
+            _id: result.id,
+            createdAt:new Date(result._doc.createdAt).toISOString(),
+            updatedAt:new Date(result._doc.updatedAt).toISOString()
         }
     }
 }
