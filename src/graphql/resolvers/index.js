@@ -154,7 +154,12 @@ const resolvers = {
             updatedAt:new Date(result._doc.updatedAt).toISOString()
         }
     },
-    
+    cancelBooking: async args => {
+        const booking = await Booking.findById({_id: args.bookingId}).populate('event')
+        const event = {...booking.event, _id: booking.event.id, creator: user.bind(this, booking.creator)}
+        await Booking.deleteOne({_id: args.bookingId})
+        return event
+    }
 }
 
 export default resolvers
